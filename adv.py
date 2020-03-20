@@ -42,7 +42,7 @@ world = World()
 #map_file = "maps/test_line.txt"
 #map_file = "maps/test_cross.txt"
 #map_file = "maps/test_loop.txt"
-# map_file = "maps/test_loop_fork.txt"
+#map_file = "maps/test_loop_fork.txt"
 map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
@@ -56,7 +56,7 @@ player = Player(world.starting_room)
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
-traversal_path = ['n', 'n', 's', 's', 's', 's', 'n', 'n', 'w', 'w', 'e', 'e', 'e', 'e']
+#traversal_path = ['n', 'n', 's', 's', 's', 's', 'n', 'n', 'w', 'w', 'e', 'e', 'e', 'e']
 
 def build_traversal_path(starting_room, room_count):
     current_room = starting_room
@@ -74,6 +74,8 @@ def build_traversal_path(starting_room, room_count):
 
     while len(traveled) < room_count:
         destination_room = stack.pop()
+        if destination_room.id in traveled:
+            continue
 
         # do bfs that will return path to destination
         q = Queue()
@@ -95,6 +97,13 @@ def build_traversal_path(starting_room, room_count):
                     #could add some rule to make it not add the backwards path to the queue or add 
                     # the opposite direction to the queue. If the room only has the opposite direction
                     # then simply don't add this path to the queue
+                    def get_opposite(direction):
+                        if direction == 'n': return 's'
+                        elif direction == 's': return 'n'
+                        elif direction == 'w': return 'e'
+                        elif direction == 'e': return 'w'
+                    if exit == get_opposite(path[-1]):
+                        continue
                     # for now I will keep the backwards paths as part of the queue
                     new_path = list(path)
                     new_path.append(exit)
@@ -104,10 +113,11 @@ def build_traversal_path(starting_room, room_count):
         for exit in path:
             current_room = current_room.get_room_in_direction(exit)
             final_path.append(exit)
-        
         # now mark the room as traveled
-        if current_room.id not in traveled:
+        #if current_room.id not in traveled:
             traveled.add(current_room.id)
+        # moved this code to loop as sets can have same things added multiple times
+        
 
         # add newly discovered rooms to stack
         exits = current_room.get_exits()
@@ -115,16 +125,6 @@ def build_traversal_path(starting_room, room_count):
             room = current_room.get_room_in_direction(exit)
             if room.id not in traveled:
                 stack.push(room)
-
-
-        #exits = current_room.get_exits()
-        #if len(exits) > 1:
-        #    past_choices = traveled[current_room.id]
-        #    for choice in exits:
-        #        if not past_choices.__contains__(choice):
-        #            direction = choice
-        #else:
-        #    direction = exits[0]
 
     return final_path
 
