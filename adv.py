@@ -39,11 +39,11 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
+#map_file = "maps/test_line.txt"
 #map_file = "maps/test_cross.txt"
 #map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-#map_file = "maps/main_maze.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -74,9 +74,7 @@ def build_traversal_path(starting_room, room_count):
         stack.push(current_room.get_room_in_direction(exit))
 
     while len(traveled) < room_count:
-        exits = current_room.get_exits()
         destination_room = stack.pop()
-
 
         # do bfs that will return path to destination
         for exit in exits:
@@ -92,6 +90,7 @@ def build_traversal_path(starting_room, room_count):
             if bfs_room.id not in visited:
                 visited.add(bfs_room.id)
                 if bfs_room == destination_room:
+                    q = Queue()
                     break
                 for exit in bfs_exits:
                     #could add some rule to make it not add the backwards path to the queue or add 
@@ -110,8 +109,6 @@ def build_traversal_path(starting_room, room_count):
         # now mark the room as traveled
         if current_room.id not in traveled:
             traveled.add(current_room.id)
-
-        # choose next direction
 
         # add newly discovered rooms to stack
         exits = current_room.get_exits()
