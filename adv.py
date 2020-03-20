@@ -57,6 +57,7 @@ player = Player(world.starting_room)
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 #traversal_path = ['n', 'n', 's', 's', 's', 's', 'n', 'n', 'w', 'w', 'e', 'e', 'e', 'e']
+import random
 
 def build_traversal_path(starting_room, room_count):
     current_room = starting_room
@@ -65,6 +66,7 @@ def build_traversal_path(starting_room, room_count):
 
     # set initial direction to the first exit in the list
     exits = current_room.get_exits()
+    random.shuffle(exits)
 
     final_path = []
     path = []
@@ -79,6 +81,7 @@ def build_traversal_path(starting_room, room_count):
 
         # do bfs that will return path to destination
         q = Queue()
+        random.shuffle(exits)
         for exit in exits:
             q.enqueue([exit])
         bfs_room = current_room
@@ -117,10 +120,14 @@ def build_traversal_path(starting_room, room_count):
         #if current_room.id not in traveled:
             traveled.add(current_room.id)
         # moved this code to loop as sets can have same things added multiple times
+
+        #if len(final_path) > 959:
+        #    return final_path
         
 
         # add newly discovered rooms to stack
         exits = current_room.get_exits()
+        random.shuffle(exits)
         for exit in exits:
             room = current_room.get_room_in_direction(exit)
             if room.id not in traveled:
@@ -129,6 +136,10 @@ def build_traversal_path(starting_room, room_count):
     return final_path
 
 traversal_path = build_traversal_path(world.starting_room, len(room_graph))
+while True:
+    if len(traversal_path) < 960:
+        break
+    traversal_path = build_traversal_path(world.starting_room, len(room_graph))
 
 # TRAVERSAL TEST
 visited_rooms = set()
