@@ -68,7 +68,6 @@ def build_traversal_path(starting_room, room_count):
 
     final_path = []
     path = []
-    q = Queue()
     stack = Stack()
     for exit in exits:
         stack.push(current_room.get_room_in_direction(exit))
@@ -77,6 +76,7 @@ def build_traversal_path(starting_room, room_count):
         destination_room = stack.pop()
 
         # do bfs that will return path to destination
+        q = Queue()
         for exit in exits:
             q.enqueue([exit])
         bfs_room = current_room
@@ -90,7 +90,6 @@ def build_traversal_path(starting_room, room_count):
             if bfs_room.id not in visited:
                 visited.add(bfs_room.id)
                 if bfs_room == destination_room:
-                    q = Queue()
                     break
                 for exit in bfs_exits:
                     #could add some rule to make it not add the backwards path to the queue or add 
